@@ -1,6 +1,7 @@
 // This file is generated. Do not edit.
 
 #include <mbgl/style/light.hpp>
+#include <mbgl/style/light_observer.hpp>
 
 namespace mbgl {
 namespace style {
@@ -107,6 +108,10 @@ void Light::setIntensityTransition(const TransitionOptions& transition) {
 
 TransitionOptions Light::getIntensityTransition() const {
     return properties.get<LightIntensity>().transition;
+}
+
+void Light::setObserver(LightObserver* observer_) {
+    observer = observer_;
 }
 
 } // namespace style

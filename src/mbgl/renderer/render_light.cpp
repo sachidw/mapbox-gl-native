@@ -2,12 +2,12 @@
 
 namespace mbgl {
 
-RenderLight::RenderLight(const style::Light light_)
-        : light(std::move(light_)) {
+RenderLight::RenderLight(const style::Light& light)
+        : properties(light.properties) {
 }
 
 void RenderLight::transition(const CascadeParameters& parameters) {
-    transitioning = TransitioningLight(light.properties, std::move(transitioning), parameters);
+    transitioning = TransitioningLight(properties, std::move(transitioning), parameters);
 }
 
 void RenderLight::evaluate(const PropertyEvaluationParameters& parameters) {

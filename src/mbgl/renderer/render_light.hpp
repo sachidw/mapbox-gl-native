@@ -71,7 +71,7 @@ using EvaluatedLight     = Evaluated<style::LightProperties>;
 
 class RenderLight {
 public:
-    RenderLight(const style::Light);
+    RenderLight(const style::Light&);
 
     void transition(const CascadeParameters&);
     void evaluate(const PropertyEvaluationParameters&);
@@ -82,7 +82,7 @@ public:
 private:
     TransitioningLight transitioning;
     EvaluatedLight evaluated;
-    style::Light light;
+    IndexedTuple<style::LightProperties, style::LightProperties> properties;
 };
 
 } // namespace mbgl

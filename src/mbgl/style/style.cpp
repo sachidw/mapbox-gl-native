@@ -63,6 +63,7 @@ Style::Style(Scheduler& scheduler_, FileSource& fileSource_, float pixelRatio)
       observer(&nullObserver) {
     glyphAtlas->setObserver(this);
     spriteAtlas->setObserver(this);
+    light->setObserver(this);
 }
 
 Style::~Style() {
@@ -78,6 +79,7 @@ Style::~Style() {
 
     glyphAtlas->setObserver(nullptr);
     spriteAtlas->setObserver(nullptr);
+    light->setObserver(nullptr);
 }
 
 bool Style::addClass(const std::string& className) {
@@ -311,6 +313,7 @@ void Style::removeRenderLayer(const std::string& id) {
 
 void Style::setLight(std::unique_ptr<Light> light_) {
     light = std::move(light_);
+    light->setObserver(this);
     renderLight = std::make_unique<RenderLight>(*light);
 }
 
@@ -754,6 +757,10 @@ void Style::onLayerLayoutPropertyChanged(Layer& layer, const char * property) {
     observer->onUpdate((strcmp(property, "icon-size") == 0 || strcmp(property, "text-size") == 0)
         ? Update::RecalculateStyle
         : Update::Repaint);
+}
+
+void Style::onLightChanged(const Light& light_) {
+    renderLight = std::make_unique<RenderLight>(light_);
 }
 
 void Style::dumpDebugLogs() const {

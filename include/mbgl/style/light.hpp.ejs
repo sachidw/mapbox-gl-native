@@ -13,8 +13,12 @@ class RenderLight;
 
 namespace style {
 
+class LightObserver;
+
 class Light {
 public:
+
+    void setObserver(LightObserver* observer);
 
 <% for (const property of properties) { -%>
     static <%- evaluatedType(property) %> getDefault<%- camelize(property.name) %>();
@@ -26,6 +30,7 @@ public:
 <% } -%>
 private:
     IndexedTuple<LightProperties, LightProperties> properties;
+    LightObserver* observer = nullptr;
 
     friend class mbgl::RenderLight;
 };

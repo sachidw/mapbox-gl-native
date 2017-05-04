@@ -10,8 +10,12 @@ class RenderLight;
 
 namespace style {
 
+class LightObserver;
+
 class Light {
 public:
+
+    void setObserver(LightObserver* observer);
 
     static LightAnchorType getDefaultAnchor();
     PropertyValue<LightAnchorType> getAnchor() const;
@@ -39,6 +43,7 @@ public:
 
 private:
     IndexedTuple<LightProperties, LightProperties> properties;
+    LightObserver* observer = nullptr;
 
     friend class mbgl::RenderLight;
 };
