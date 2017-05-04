@@ -59,6 +59,7 @@ Style::Style(Scheduler& scheduler_, FileSource& fileSource_, float pixelRatio)
       spriteAtlas(std::make_unique<SpriteAtlas>(Size{ 1024, 1024 }, pixelRatio)),
       lineAtlas(std::make_unique<LineAtlas>(Size{ 256, 512 })),
       light(std::make_unique<Light>()),
+      renderLight(std::make_unique<RenderLight>(*light)),
       observer(&nullObserver) {
     glyphAtlas->setObserver(this);
     spriteAtlas->setObserver(this);
@@ -147,7 +148,7 @@ void Style::setJSON(const std::string& json) {
     defaultZoom = parser.zoom;
     defaultBearing = parser.bearing;
     defaultPitch = parser.pitch;
-    light = std::make_unique<Light>(parser.light);
+    setLight(std::make_unique<Light>(parser.light));
 
     glyphAtlas->setURL(parser.glyphURL);
     spriteAtlas->load(parser.spriteURL, scheduler, fileSource);
@@ -308,6 +309,19 @@ void Style::removeRenderLayer(const std::string& id) {
     }
 }
 
+void Style::setLight(std::unique_ptr<Light> light_) {
+    light = std::move(light_);
+    renderLight = std::make_unique<RenderLight>(*light);
+}
+
+Light* Style::getLight() const {
+    return light.get();
+}
+
+RenderLight* Style::getRenderLight() const {
+    return renderLight.get();
+}
+
 std::string Style::getName() const {
     return name;
 }
@@ -359,11 +373,11 @@ void Style::update(const UpdateParameters& parameters) {
                                         *this);
 
     if (parameters.updateFlags & Update::Classes) {
-        transitioningLight = TransitioningLight(*light, std::move(transitioningLight), cascadeParameters);
+        renderLight->transition(cascadeParameters);
     }
 
     if (parameters.updateFlags & Update::RecalculateStyle) {
-        evaluatedLight = EvaluatedLight(transitioningLight, evaluationParameters);
+        renderLight->evaluate(evaluationParameters);
     }
 
     for (const auto& renderSource : renderSources) {
@@ -438,7 +452,7 @@ RenderSource* Style::getRenderSource(const std::string& id) const {
 }
 
 bool Style::hasTransitions() const {
-    if (transitioningLight.hasTransition()) {
+    if (renderLight->hasTransition()) {
         return true;
     }
 

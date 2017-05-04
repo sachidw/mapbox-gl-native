@@ -975,7 +975,7 @@ void Map::setLight(std::unique_ptr<style::Light> light) {
         return;
     }
 
-    impl->style->light = std::move(light);
+    impl->style->setLight(std::move(light));
 }
 
 style::Light* Map::getLight() {
@@ -983,7 +983,7 @@ style::Light* Map::getLight() {
         return nullptr;
     }
 
-    return impl->style->light.get();
+    return impl->style->getLight();
 }
 
 #pragma mark - Defaults
