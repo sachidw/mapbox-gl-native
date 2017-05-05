@@ -4,18 +4,18 @@
 
 #include <mbgl/style/light_properties.hpp>
 
+#include <memory>
+
 namespace mbgl {
-
-class RenderLight;
-
 namespace style {
-
-class LightObserver;
 
 class Light {
 public:
 
-    void setObserver(LightObserver* observer);
+    class Impl;
+
+    Light();
+    ~Light();
 
     static LightAnchorType getDefaultAnchor();
     PropertyValue<LightAnchorType> getAnchor() const;
@@ -41,11 +41,7 @@ public:
     void setIntensityTransition(const TransitionOptions&);
     TransitionOptions getIntensityTransition() const;
 
-private:
-    IndexedTuple<LightProperties, LightProperties> properties;
-    LightObserver* observer = nullptr;
-
-    friend class mbgl::RenderLight;
+    std::shared_ptr<Impl> impl;
 };
 
 } // namespace style
